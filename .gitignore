@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Vercel
+.vercel/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Non-code project files
+*.pptx
+*.zip
+stitch_output/
+DESIGN.md
+
+# AI Agent configs
+AGENT.md
+CLAUDE.md
+.agent-mem/
+.brainsync/
+.agent/
+.agents/
+.cursor/
+.vscode/
+.windsurfrules
+.cursorrules
+.clineRules
+.cline/
+.gemini/
+.mcp.json
+.brainsync/agent-rules.md

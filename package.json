@@ -1,0 +1,13 @@
+{
+  "name": "meddose",
+  "version": "1.0.0",
+  "description": "MedDose - Kalkulator Dosis Obat",
+  "main": "api/calculate.js",
+  "scripts": {
+    "dev": "npx vercel dev",
+    "start": "npx serve public -l 3000"
+  },
+  "keywords": ["medical", "dosage", "calculator"],
+  "author": "MedDose Team",
+  "license": "MIT"
+}

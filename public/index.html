@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedDose — Kalkulator Dosis Obat</title>
+  <meta name="description" content="MedDose: Kalkulator dosis obat yang tepat dan aman. Hitung dosis berdasarkan berat badan, usia, dan kondisi pasien." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar" id="navbar">
+    <a href="/" class="navbar-brand">
+      <span class="brand-icon">💊</span>
+      MedDose
+    </a>
+    <div class="navbar-actions">
+      <button class="icon-btn" id="btn-dark-mode" title="Toggle Dark Mode">
+        <span class="material-symbols-outlined">dark_mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <section class="hero animate-fade-in-up stagger-1">
+      <h1 class="text-headline-lg">Kalkulator Dosis Obat</h1>
+      <p class="text-body-lg">Hitung dosis obat yang tepat dan aman</p>
+    </section>
+
+    <!-- Form -->
+    <form id="dosage-form" autocomplete="off">
+
+      <!-- Card: Data Pasien -->
+      <div class="card animate-fade-in-up stagger-2">
+        <div class="card-header">
+          <span class="card-icon">📋</span>
+          <h2>DATA PASIEN</h2>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="patient-name">Nama Pasien</label>
+            <input type="text" id="patient-name" class="input-field" placeholder="Masukkan nama..." required />
+          </div>
+          <div class="form-group">
+            <label for="weight">Berat Badan</label>
+            <div class="input-wrapper">
+              <input type="number" id="weight" class="input-field" placeholder="0.0" step="0.1" min="0.5" max="300" required />
+              <span class="input-suffix">kg</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="age">Usia</label>
+            <div class="input-wrapper">
+              <input type="number" id="age" class="input-field" placeholder="0" step="0.1" min="0" max="150" required />
+              <span class="input-suffix">tahun</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategori Usia -->
+        <div class="choice-group">
+          <label>Kategori Usia</label>
+          <div class="choice-options" id="age-category-options">
+            <label class="choice-label">
+              <input type="radio" name="age-category" value="bayi" />
+              <span>Bayi (0-1)</span>
+            </label>
+            <label class="choice-label">
+              <input type="radio" name="age-category" value="anak" />
+              <span>Anak (1-12)</span>
+            </label>
+            <label class="choice-label">
+              <input type="radio" name="age-category" value="remaja" />
+              <span>Remaja (12-17)</span>
+            </label>
+            <label class="choice-label">
+              <input type="radio" name="age-category" value="dewasa" checked />
+              <span>Dewasa (18-64)</span>
+            </label>
+            <label class="choice-label">
+              <input type="radio" name="age-category" value="lansia" />
+              <span>Lansia (65+)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Kondisi Khusus -->
+        <div class="choice-group">
+          <label>Kondisi Khusus</label>
+          <div class="choice-options">
+            <label class="choice-label">
+              <input type="checkbox" name="conditions" value="gangguanGinjal" />
+              <span>Gangguan Ginjal</span>
+            </label>
+            <label class="choice-label">
+              <input type="checkbox" name="conditions" value="gangguanHati" />
+              <span>Gangguan Hati</span>
+            </label>
+            <label class="choice-label">
+              <input type="checkbox" name="conditions" value="hamil" />
+              <span>Hamil</span>
+            </label>
+            <label class="choice-label">
+              <input type="checkbox" name="conditions" value="menyusui" />
+              <span>Menyusui</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Pilih Obat -->
+      <div class="card animate-fade-in-up stagger-3">
+        <div class="card-header">
+          <span class="card-icon">💊</span>
+          <h2>PILIH OBAT</h2>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="drug-select">Jenis Obat</label>
+            <select id="drug-select" class="select-field" required>
+              <option value="">Pilih Obat...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="frequency-select">Frekuensi Pemberian</label>
+            <select id="frequency-select" class="select-field" required>
+              <option value="">Pilih frekuensi...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Drug Info Banner (dynamic) -->
+        <div id="drug-info-banner" class="info-banner info hidden">
+          <span class="banner-icon">ℹ️</span>
+          <div>
+            <p class="banner-title text-label-md" id="drug-info-title">Standar Dosis</p>
+            <p class="banner-text text-body-sm" id="drug-info-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Interaksi Obat -->
+      <div class="card animate-fade-in-up stagger-3">
+        <div class="card-header">
+          <span class="card-icon">⚠️</span>
+          <h2>INTERAKSI OBAT</h2>
+        </div>
+        <div class="form-group">
+          <label for="interaction-select">Pilih Obat Bersamaan (Opsional)</label>
+          <select id="interaction-select" class="select-field">
+            <option value="none">Tidak ada</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-row animate-fade-in-up stagger-4">
+        <button type="button" class="btn btn-outline" id="btn-reset">
+          <span class="btn-icon">🔄</span> Reset
+        </button>
+        <button type="submit" class="btn btn-primary" id="btn-calculate">
+          <span class="btn-icon">💊</span> Hitung Dosis
+        </button>
+      </div>
+    </form>
+
+    <!-- ===== RESULT SECTION ===== -->
+    <div id="result-section" class="hidden">
+
+      <!-- Result Card -->
+      <div class="card result-card animate-fade-in-up" id="result-card">
+        <div class="card-header-with-badge">
+          <h2>
+            <span>📊</span> HASIL PERHITUNGAN
+          </h2>
+          <span class="status-badge" id="result-status-badge"></span>
+        </div>
+
+        <div class="result-layout">
+          <div class="dose-display">
+            <span class="dose-label text-label-md">Dosis Rekomendasi</span>
+            <span class="dose-value" id="result-dose">
+              <span id="result-dose-number">0</span>
+              <span class="dose-unit" id="result-dose-unit">mg</span>
+            </span>
+          </div>
+          <div class="dose-details" id="result-details">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Warnings -->
+        <div id="result-warnings" class="warnings-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== HISTORY SECTION ===== -->
+    <div class="card animate-fade-in-up stagger-5" id="history-section" style="margin-top: var(--space-lg);">
+      <div class="card-header">
+        <span class="card-icon">📜</span>
+        <h2>RIWAYAT PERHITUNGAN</h2>
+      </div>
+
+      <div class="history-table-wrapper">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Pasien</th>
+              <th>Obat</th>
+              <th>Dosis</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+          </tbody>
+        </table>
+        <div class="history-empty" id="history-empty">
+          <div class="empty-icon">📋</div>
+          <p>Belum ada riwayat perhitungan</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <span>⚕️</span> MedDose
+    </div>
+    <p>© 2026 MedDose — Alat bantu perhitungan dosis. Selalu konsultasikan dengan dokter atau apoteker sebelum mengonsumsi obat.</p>
+    <div class="footer-links">
+      <a href="#" onclick="return false;">Disclaimer Medis</a>
+      <a href="#" onclick="return false;">Kebijakan Privasi</a>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
