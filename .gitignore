@@ -19,6 +19,8 @@ stitch_output/
 stitch_fertilicalc/
 design_b64.txt
 stitch_preview.html
+DESIGN.md
+tests/
 
 # AI Agent configs
 AGENT.md
