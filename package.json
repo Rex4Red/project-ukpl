@@ -1,13 +1,13 @@
 {
-  "name": "meddose",
+  "name": "fertili-calc",
   "version": "1.0.0",
-  "description": "MedDose - Kalkulator Dosis Obat",
+  "description": "FertiliCalc - Kalkulator Dosis Pupuk Tanaman",
   "main": "api/calculate.js",
   "scripts": {
     "dev": "npx vercel dev",
     "start": "npx serve public -l 3000"
   },
-  "keywords": ["medical", "dosage", "calculator"],
-  "author": "MedDose Team",
+  "keywords": ["fertilizer", "dosage", "calculator", "agriculture"],
+  "author": "FertiliCalc Team",
   "license": "MIT"
 }

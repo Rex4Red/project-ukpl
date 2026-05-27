@@ -16,7 +16,9 @@ Thumbs.db
 *.pptx
 *.zip
 stitch_output/
-DESIGN.md
+stitch_fertilicalc/
+design_b64.txt
+stitch_preview.html
 
 # AI Agent configs
 AGENT.md

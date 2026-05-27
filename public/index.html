@@ -1,251 +1,160 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedDose — Kalkulator Dosis Obat</title>
-  <meta name="description" content="MedDose: Kalkulator dosis obat yang tepat dan aman. Hitung dosis berdasarkan berat badan, usia, dan kondisi pasien." />
+  <meta name="description" content="FertiliCalc — Kalkulator Dosis Pupuk Tanaman. Hitung dosis pupuk yang tepat berdasarkan jenis tanaman, fase pertumbuhan, dan kondisi lahan." />
+  <title>FertiliCalc — Kalkulator Dosis Pupuk Tanaman</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>" />
 </head>
 <body>
+  <!-- Background decoration -->
+  <div class="bg-decoration">
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+  </div>
 
-  <!-- ===== NAVBAR ===== -->
-  <header class="navbar" id="navbar">
-    <a href="/" class="navbar-brand">
-      <span class="brand-icon">💊</span>
-      MedDose
-    </a>
-    <div class="navbar-actions">
-      <button class="icon-btn" id="btn-dark-mode" title="Toggle Dark Mode">
-        <span class="material-symbols-outlined">dark_mode</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="main-content">
-
-    <!-- Hero -->
-    <section class="hero animate-fade-in-up stagger-1">
-      <h1 class="text-headline-lg">Kalkulator Dosis Obat</h1>
-      <p class="text-body-lg">Hitung dosis obat yang tepat dan aman</p>
-    </section>
-
-    <!-- Form -->
-    <form id="dosage-form" autocomplete="off">
-
-      <!-- Card: Data Pasien -->
-      <div class="card animate-fade-in-up stagger-2">
-        <div class="card-header">
-          <span class="card-icon">📋</span>
-          <h2>DATA PASIEN</h2>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="patient-name">Nama Pasien</label>
-            <input type="text" id="patient-name" class="input-field" placeholder="Masukkan nama..." required />
-          </div>
-          <div class="form-group">
-            <label for="weight">Berat Badan</label>
-            <div class="input-wrapper">
-              <input type="number" id="weight" class="input-field" placeholder="0.0" step="0.1" min="0.5" max="300" required />
-              <span class="input-suffix">kg</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="age">Usia</label>
-            <div class="input-wrapper">
-              <input type="number" id="age" class="input-field" placeholder="0" step="0.1" min="0" max="150" required />
-              <span class="input-suffix">tahun</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Kategori Usia -->
-        <div class="choice-group">
-          <label>Kategori Usia</label>
-          <div class="choice-options" id="age-category-options">
-            <label class="choice-label">
-              <input type="radio" name="age-category" value="bayi" />
-              <span>Bayi (0-1)</span>
-            </label>
-            <label class="choice-label">
-              <input type="radio" name="age-category" value="anak" />
-              <span>Anak (1-12)</span>
-            </label>
-            <label class="choice-label">
-              <input type="radio" name="age-category" value="remaja" />
-              <span>Remaja (12-17)</span>
-            </label>
-            <label class="choice-label">
-              <input type="radio" name="age-category" value="dewasa" checked />
-              <span>Dewasa (18-64)</span>
-            </label>
-            <label class="choice-label">
-              <input type="radio" name="age-category" value="lansia" />
-              <span>Lansia (65+)</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Kondisi Khusus -->
-        <div class="choice-group">
-          <label>Kondisi Khusus</label>
-          <div class="choice-options">
-            <label class="choice-label">
-              <input type="checkbox" name="conditions" value="gangguanGinjal" />
-              <span>Gangguan Ginjal</span>
-            </label>
-            <label class="choice-label">
-              <input type="checkbox" name="conditions" value="gangguanHati" />
-              <span>Gangguan Hati</span>
-            </label>
-            <label class="choice-label">
-              <input type="checkbox" name="conditions" value="hamil" />
-              <span>Hamil</span>
-            </label>
-            <label class="choice-label">
-              <input type="checkbox" name="conditions" value="menyusui" />
-              <span>Menyusui</span>
-            </label>
-          </div>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🌱</span>
+        <div>
+          <h1>FertiliCalc</h1>
+          <p class="subtitle">Kalkulator Dosis Pupuk Tanaman</p>
         </div>
       </div>
+      <p class="tagline">Hitung dosis pupuk yang tepat untuk hasil panen optimal</p>
+    </header>
 
-      <!-- Card: Pilih Obat -->
-      <div class="card animate-fade-in-up stagger-3">
-        <div class="card-header">
-          <span class="card-icon">💊</span>
-          <h2>PILIH OBAT</h2>
-        </div>
-
-        <div class="form-grid">
+    <!-- Main Form -->
+    <main class="main-content">
+      <form id="calcForm" class="calc-form">
+        <!-- Row 1: Nama Petani + Jenis Tanaman -->
+        <div class="form-row">
           <div class="form-group">
-            <label for="drug-select">Jenis Obat</label>
-            <select id="drug-select" class="select-field" required>
-              <option value="">Pilih Obat...</option>
-            </select>
+            <label for="farmerName">👨‍🌾 Nama Petani</label>
+            <input type="text" id="farmerName" name="farmerName" placeholder="Masukkan nama petani" required />
           </div>
           <div class="form-group">
-            <label for="frequency-select">Frekuensi Pemberian</label>
-            <select id="frequency-select" class="select-field" required>
-              <option value="">Pilih frekuensi...</option>
+            <label for="plantId">🌿 Jenis Tanaman</label>
+            <select id="plantId" name="plantId" required>
+              <option value="">— Pilih Tanaman —</option>
+              <option value="padi">🌾 Padi</option>
+              <option value="jagung">🌽 Jagung</option>
+              <option value="cabai">🌶️ Cabai Merah</option>
+              <option value="tomat">🍅 Tomat</option>
+              <option value="sawit">🌴 Kelapa Sawit</option>
+              <option value="bawang">🧅 Bawang Merah</option>
             </select>
           </div>
         </div>
 
-        <!-- Drug Info Banner (dynamic) -->
-        <div id="drug-info-banner" class="info-banner info hidden">
-          <span class="banner-icon">ℹ️</span>
-          <div>
-            <p class="banner-title text-label-md" id="drug-info-title">Standar Dosis</p>
-            <p class="banner-text text-body-sm" id="drug-info-text"></p>
+        <!-- Row 2: Luas Lahan + Usia Tanam -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="landArea">📐 Luas Lahan (m²)</label>
+            <input type="number" id="landArea" name="landArea" min="1" max="100000" step="1" placeholder="contoh: 5000" required />
+            <span class="hint">Min: 1 m² | Max: 100.000 m²</span>
+          </div>
+          <div class="form-group">
+            <label for="plantAge">📅 Usia Tanam (hari)</label>
+            <input type="number" id="plantAge" name="plantAge" min="0" max="365" step="1" placeholder="contoh: 30" required />
+            <span class="hint" id="phaseHint">Min: 0 | Max: 365 hari</span>
           </div>
         </div>
-      </div>
 
-      <!-- Card: Interaksi Obat -->
-      <div class="card animate-fade-in-up stagger-3">
-        <div class="card-header">
-          <span class="card-icon">⚠️</span>
-          <h2>INTERAKSI OBAT</h2>
+        <!-- Row 3: Jenis Pupuk + pH Tanah -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fertilizerId">🧪 Jenis Pupuk</label>
+            <select id="fertilizerId" name="fertilizerId" required>
+              <option value="">— Pilih Pupuk —</option>
+              <option value="urea">Urea (46% N)</option>
+              <option value="npk_15">NPK Phonska (15-15-15)</option>
+              <option value="kcl">KCl (60% K₂O)</option>
+              <option value="sp36">SP-36 (36% P₂O₅)</option>
+              <option value="za">ZA / Amonium Sulfat</option>
+              <option value="organik">Pupuk Organik / Kompos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="soilPh">🔬 pH Tanah</label>
+            <input type="number" id="soilPh" name="soilPh" min="0" max="14" step="0.1" placeholder="contoh: 6.5" required />
+            <span class="hint">Skala 0-14 (netral: 7.0)</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="interaction-select">Pilih Obat Bersamaan (Opsional)</label>
-          <select id="interaction-select" class="select-field">
-            <option value="none">Tidak ada</option>
+
+        <!-- Row 4: Kondisi Khusus -->
+        <div class="form-group full-width">
+          <label>⚡ Kondisi Khusus Lahan <span class="optional">(opsional, bisa pilih lebih dari 1)</span></label>
+          <div class="checkbox-group" id="conditionsGroup">
+            <label class="checkbox-label">
+              <input type="checkbox" name="conditions" value="tanahAsam" />
+              <span class="checkmark"></span>
+              Tanah Sangat Asam (pH &lt; 5)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="conditions" value="kekeringan" />
+              <span class="checkmark"></span>
+              Musim Kemarau / Kekeringan
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="conditions" value="bekasBanjir" />
+              <span class="checkmark"></span>
+              Bekas Banjir / Genangan
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="conditions" value="seranganHama" />
+              <span class="checkmark"></span>
+              Serangan Hama / Penyakit
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="conditions" value="lahanBaru" />
+              <span class="checkmark"></span>
+              Lahan Baru / Belum Pernah Ditanam
+            </label>
+          </div>
+        </div>
+
+        <!-- Row 5: Pupuk Lain -->
+        <div class="form-group full-width">
+          <label for="otherFertilizer">🔄 Pupuk Lain yang Sudah Diaplikasikan <span class="optional">(opsional)</span></label>
+          <select id="otherFertilizer" name="otherFertilizer">
+            <option value="none">— Tidak ada pupuk lain —</option>
+            <option value="urea">Urea</option>
+            <option value="npk_15">NPK Phonska</option>
+            <option value="kcl">KCl</option>
+            <option value="sp36">SP-36</option>
+            <option value="za">ZA</option>
+            <option value="organik">Pupuk Organik</option>
           </select>
         </div>
-      </div>
 
-      <!-- Action Buttons -->
-      <div class="action-row animate-fade-in-up stagger-4">
-        <button type="button" class="btn btn-outline" id="btn-reset">
-          <span class="btn-icon">🔄</span> Reset
+        <!-- Submit Button -->
+        <button type="submit" id="submitBtn" class="btn-calculate">
+          <span class="btn-icon">🌿</span>
+          <span class="btn-text">Hitung Dosis Pupuk</span>
+          <span class="btn-loading" style="display:none;">⏳ Menghitung...</span>
         </button>
-        <button type="submit" class="btn btn-primary" id="btn-calculate">
-          <span class="btn-icon">💊</span> Hitung Dosis
-        </button>
-      </div>
-    </form>
+      </form>
 
-    <!-- ===== RESULT SECTION ===== -->
-    <div id="result-section" class="hidden">
+      <!-- Result Section -->
+      <section id="resultSection" class="result-section" style="display:none;">
+        <div id="resultContent"></div>
+      </section>
+    </main>
 
-      <!-- Result Card -->
-      <div class="card result-card animate-fade-in-up" id="result-card">
-        <div class="card-header-with-badge">
-          <h2>
-            <span>📊</span> HASIL PERHITUNGAN
-          </h2>
-          <span class="status-badge" id="result-status-badge"></span>
-        </div>
-
-        <div class="result-layout">
-          <div class="dose-display">
-            <span class="dose-label text-label-md">Dosis Rekomendasi</span>
-            <span class="dose-value" id="result-dose">
-              <span id="result-dose-number">0</span>
-              <span class="dose-unit" id="result-dose-unit">mg</span>
-            </span>
-          </div>
-          <div class="dose-details" id="result-details">
-            <!-- filled by JS -->
-          </div>
-        </div>
-
-        <!-- Warnings -->
-        <div id="result-warnings" class="warnings-list"></div>
-      </div>
-    </div>
-
-    <!-- ===== HISTORY SECTION ===== -->
-    <div class="card animate-fade-in-up stagger-5" id="history-section" style="margin-top: var(--space-lg);">
-      <div class="card-header">
-        <span class="card-icon">📜</span>
-        <h2>RIWAYAT PERHITUNGAN</h2>
-      </div>
-
-      <div class="history-table-wrapper">
-        <table class="history-table" id="history-table">
-          <thead>
-            <tr>
-              <th>Waktu</th>
-              <th>Pasien</th>
-              <th>Obat</th>
-              <th>Dosis</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="history-body">
-          </tbody>
-        </table>
-        <div class="history-empty" id="history-empty">
-          <div class="empty-icon">📋</div>
-          <p>Belum ada riwayat perhitungan</p>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="footer-brand">
-      <span>⚕️</span> MedDose
-    </div>
-    <p>© 2026 MedDose — Alat bantu perhitungan dosis. Selalu konsultasikan dengan dokter atau apoteker sebelum mengonsumsi obat.</p>
-    <div class="footer-links">
-      <a href="#" onclick="return false;">Disclaimer Medis</a>
-      <a href="#" onclick="return false;">Kebijakan Privasi</a>
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="footer">
+      <p>FertiliCalc v1.0 — Proyek Uji Kualitas Perangkat Lunak (UKPL) 2026</p>
+      <p class="disclaimer">⚠️ Perhitungan ini bersifat estimasi. Selalu konsultasikan dengan penyuluh pertanian setempat.</p>
+    </footer>
+  </div>
 
   <script src="/js/app.js"></script>
 </body>

@@ -1,441 +1,224 @@
 /**
- * MedDose — Frontend Application
- * Handles form interaction, API calls, result display, and history.
+ * FertiliCalc — Frontend Logic
+ * =============================
  */
 
-(function () {
-  'use strict';
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('calcForm');
+  const resultSection = document.getElementById('resultSection');
+  const resultContent = document.getElementById('resultContent');
+  const submitBtn = document.getElementById('submitBtn');
+  const phaseHint = document.getElementById('phaseHint');
 
-  // ==================== CONFIG ====================
-  const API_BASE = '/api/calculate';
+  // =========== Phase hint on plant/age change ===========
+  const plantAgeInput = document.getElementById('plantAge');
+  const plantSelect = document.getElementById('plantId');
 
-  // ==================== STATE ====================
-  let drugData = [];
-  let interactionData = [];
-  let calculationHistory = [];
+  const plantPhases = {
+    padi:   { semai: [0,20], vegetatif: [21,60], generatif: [61,100], panen: [101,120], max: 120 },
+    jagung: { semai: [0,14], vegetatif: [15,50], generatif: [51,85],  panen: [86,100],  max: 100 },
+    cabai:  { semai: [0,30], vegetatif: [31,70], generatif: [71,130], panen: [131,150], max: 150 },
+    tomat:  { semai: [0,25], vegetatif: [26,55], generatif: [56,100], panen: [101,120], max: 120 },
+    sawit:  { semai: [0,90], vegetatif: [91,200],generatif: [201,330],panen: [331,365], max: 365 },
+    bawang: { semai: [0,10], vegetatif: [11,35], generatif: [36,60],  panen: [61,70],   max: 70  },
+  };
 
-  // ==================== DOM ELEMENTS ====================
-  const form = document.getElementById('dosage-form');
-  const patientNameInput = document.getElementById('patient-name');
-  const weightInput = document.getElementById('weight');
-  const ageInput = document.getElementById('age');
-  const drugSelect = document.getElementById('drug-select');
-  const frequencySelect = document.getElementById('frequency-select');
-  const interactionSelect = document.getElementById('interaction-select');
-  const btnCalculate = document.getElementById('btn-calculate');
-  const btnReset = document.getElementById('btn-reset');
-  const resultSection = document.getElementById('result-section');
-  const resultCard = document.getElementById('result-card');
-  const resultStatusBadge = document.getElementById('result-status-badge');
-  const resultDoseNumber = document.getElementById('result-dose-number');
-  const resultDoseUnit = document.getElementById('result-dose-unit');
-  const resultDetails = document.getElementById('result-details');
-  const resultWarnings = document.getElementById('result-warnings');
-  const drugInfoBanner = document.getElementById('drug-info-banner');
-  const drugInfoTitle = document.getElementById('drug-info-title');
-  const drugInfoText = document.getElementById('drug-info-text');
-  const historyBody = document.getElementById('history-body');
-  const historyEmpty = document.getElementById('history-empty');
+  const phaseLabels = {
+    semai: '🌱 Semai', vegetatif: '🌿 Vegetatif', generatif: '🌸 Generatif', panen: '🌾 Panen',
+  };
 
-  // ==================== INIT ====================
-  async function init() {
-    initDarkMode();
-    await loadDrugData();
-    loadHistoryFromStorage();
-    setupEventListeners();
-    autoSelectAgeCategory();
-  }
+  function updatePhaseHint() {
+    const plant = plantSelect.value;
+    const age = parseInt(plantAgeInput.value);
 
-  // ==================== DARK MODE ====================
-  function initDarkMode() {
-    const btnDarkMode = document.getElementById('btn-dark-mode');
-    const savedTheme = localStorage.getItem('meddose-theme');
-
-    if (savedTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      btnDarkMode.querySelector('.material-symbols-outlined').textContent = 'light_mode';
-    }
-
-    btnDarkMode.addEventListener('click', function () {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        document.documentElement.removeAttribute('data-theme');
-        btnDarkMode.querySelector('.material-symbols-outlined').textContent = 'dark_mode';
-        localStorage.setItem('meddose-theme', 'light');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        btnDarkMode.querySelector('.material-symbols-outlined').textContent = 'light_mode';
-        localStorage.setItem('meddose-theme', 'dark');
-      }
-    });
-  }
-
-  // ==================== DATA LOADING ====================
-  async function loadDrugData() {
-    try {
-      const response = await fetch(API_BASE);
-      const json = await response.json();
-
-      if (json.success) {
-        drugData = json.data.drugs;
-        interactionData = json.data.interactions;
-        populateDrugSelect();
-        populateInteractionSelect();
-      }
-    } catch (error) {
-      console.error('Failed to load drug data:', error);
-      // Fallback: populate with hardcoded data
-      populateDrugSelectFallback();
-    }
-  }
-
-  function populateDrugSelect() {
-    drugSelect.innerHTML = '<option value="">Pilih Obat...</option>';
-    drugData.forEach(function (drug) {
-      const option = document.createElement('option');
-      option.value = drug.id;
-      option.textContent = drug.name + ' — ' + drug.category;
-      drugSelect.appendChild(option);
-    });
-  }
-
-  function populateDrugSelectFallback() {
-    const drugs = [
-      { id: 'paracetamol', name: 'Paracetamol', category: 'Analgesik' },
-      { id: 'amoxicillin', name: 'Amoxicillin', category: 'Antibiotik' },
-      { id: 'ibuprofen', name: 'Ibuprofen', category: 'NSAID' },
-      { id: 'metformin', name: 'Metformin', category: 'Antidiabetes' },
-      { id: 'omeprazole', name: 'Omeprazole', category: 'PPI' },
-      { id: 'cetirizine', name: 'Cetirizine', category: 'Antihistamin' }
-    ];
-    drugSelect.innerHTML = '<option value="">Pilih Obat...</option>';
-    drugs.forEach(function (drug) {
-      const option = document.createElement('option');
-      option.value = drug.id;
-      option.textContent = drug.name + ' — ' + drug.category;
-      drugSelect.appendChild(option);
-    });
-  }
-
-  function populateInteractionSelect() {
-    interactionSelect.innerHTML = '';
-    interactionData.forEach(function (item) {
-      const option = document.createElement('option');
-      option.value = item.id;
-      option.textContent = item.name;
-      interactionSelect.appendChild(option);
-    });
-  }
-
-  // ==================== EVENT LISTENERS ====================
-  function setupEventListeners() {
-    form.addEventListener('submit', handleSubmit);
-    btnReset.addEventListener('click', handleReset);
-    drugSelect.addEventListener('change', handleDrugChange);
-    ageInput.addEventListener('input', autoSelectAgeCategory);
-  }
-
-  function autoSelectAgeCategory() {
-    const age = parseFloat(ageInput.value);
-    if (isNaN(age) || age < 0) return;
-
-    let category = 'dewasa';
-    if (age < 1) category = 'bayi';
-    else if (age < 12) category = 'anak';
-    else if (age < 18) category = 'remaja';
-    else if (age < 65) category = 'dewasa';
-    else category = 'lansia';
-
-    const radios = document.querySelectorAll('input[name="age-category"]');
-    radios.forEach(function (radio) {
-      radio.checked = radio.value === category;
-    });
-  }
-
-  function handleDrugChange() {
-    const drugId = drugSelect.value;
-    const drug = drugData.find(function (d) { return d.id === drugId; });
-
-    // Update frequency options
-    frequencySelect.innerHTML = '<option value="">Pilih frekuensi...</option>';
-
-    if (drug) {
-      drug.allowedFrequencies.forEach(function (freq) {
-        const option = document.createElement('option');
-        option.value = freq;
-        const dosesPerDay = Math.floor(24 / freq);
-        option.textContent = 'Tiap ' + freq + ' jam (' + dosesPerDay + 'x sehari)';
-        frequencySelect.appendChild(option);
-      });
-
-      // Show drug info banner
-      drugInfoTitle.textContent = 'Standar Dosis (' + drug.name + ')';
-      drugInfoText.textContent =
-        drug.dosePerKg.min + '-' + drug.dosePerKg.max + ' ' + drug.unit +
-        '/kgBB per pemberian. Frekuensi: tiap ' +
-        drug.allowedFrequencies.join('/') + ' jam.';
-      drugInfoBanner.classList.remove('hidden');
-    } else {
-      drugInfoBanner.classList.add('hidden');
-    }
-  }
-
-  // ==================== FORM SUBMISSION ====================
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    // Gather form data
-    const ageCategory = document.querySelector('input[name="age-category"]:checked');
-    const conditionCheckboxes = document.querySelectorAll('input[name="conditions"]:checked');
-    const conditions = Array.from(conditionCheckboxes).map(function (cb) { return cb.value; });
-
-    const payload = {
-      patientName: patientNameInput.value.trim(),
-      weight: parseFloat(weightInput.value),
-      age: parseFloat(ageInput.value),
-      ageCategory: ageCategory ? ageCategory.value : null,
-      drugId: drugSelect.value,
-      frequency: parseInt(frequencySelect.value),
-      conditions: conditions,
-      interactingDrug: interactionSelect.value
-    };
-
-    // Disable button
-    btnCalculate.disabled = true;
-    btnCalculate.innerHTML = '<span class="loading-spinner"></span> Menghitung...';
-
-    try {
-      const response = await fetch(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        displayResult(result.data);
-        addToHistory(result.data);
-      } else {
-        displayErrors(result.errors);
-      }
-    } catch (error) {
-      console.error('API Error:', error);
-      displayErrors(['Gagal terhubung ke server. Pastikan server berjalan.']);
-    } finally {
-      btnCalculate.disabled = false;
-      btnCalculate.innerHTML = '<span class="btn-icon">💊</span> Hitung Dosis';
-    }
-  }
-
-  // ==================== DISPLAY RESULT ====================
-  function displayResult(data) {
-    resultSection.classList.remove('hidden');
-
-    // Reset animation
-    resultCard.classList.remove('animate-fade-in-up');
-    void resultCard.offsetWidth;
-    resultCard.classList.add('animate-fade-in-up');
-
-    // Status badge
-    const statusLower = data.status.toLowerCase();
-    resultStatusBadge.className = 'status-badge ' + statusLower;
-
-    let statusIcon = '🟢';
-    if (statusLower === 'perhatian') statusIcon = '🟡';
-    else if (statusLower === 'peringatan') statusIcon = '🟠';
-    else if (statusLower === 'bahaya') statusIcon = '🔴';
-    resultStatusBadge.innerHTML = '<span>' + statusIcon + '</span> ' + data.status;
-
-    // Result card border color
-    resultCard.className = 'card result-card animate-fade-in-up status-' + statusLower;
-
-    // Dose display
-    resultDoseNumber.textContent = data.dosePerAdministration;
-    resultDoseUnit.textContent = data.unit;
-
-    // Detail rows
-    const marginClass = data.marginPercentage > 50 ? 'safe' : data.marginPercentage > 20 ? 'warning' : 'danger';
-
-    resultDetails.innerHTML =
-      createDetailRow('Dosis per pemberian', data.dosePerAdministration + ' ' + data.unit) +
-      createDetailRow('Frekuensi', data.frequencyLabel) +
-      createDetailRow('Total per hari', data.totalDailyDose + ' ' + data.unit) +
-      createDetailRow('Dosis Maksimal/Hari', data.maxDailyDose + ' ' + data.unit) +
-      createDetailRow('Sisa Margin', data.remainingMargin + ' ' + data.unit + ' (' + data.marginPercentage + '%)', marginClass) +
-      createDetailRow('Kategori Usia', data.ageCategory);
-
-    // Warnings
-    resultWarnings.innerHTML = '';
-    if (data.warnings && data.warnings.length > 0) {
-      data.warnings.forEach(function (warning) {
-        resultWarnings.appendChild(createWarningBanner(warning));
-      });
-    }
-
-    // Scroll to result
-    setTimeout(function () {
-      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
-
-  function createDetailRow(label, value, valueClass) {
-    const cls = valueClass ? ' ' + valueClass : '';
-    return '<div class="detail-row">' +
-      '<span class="detail-label">' + label + '</span>' +
-      '<span class="detail-value' + cls + '">' + value + '</span>' +
-      '</div>';
-  }
-
-  function createWarningBanner(warning) {
-    const banner = document.createElement('div');
-    let bannerClass = 'info';
-    let icon = 'ℹ️';
-
-    if (warning.type === 'danger') {
-      bannerClass = 'danger';
-      icon = '🚨';
-    } else if (warning.type === 'warning') {
-      bannerClass = 'warning';
-      icon = '⚠️';
-    } else if (warning.type === 'success' || warning.type === 'safe') {
-      bannerClass = 'success';
-      icon = '✅';
-    }
-
-    banner.className = 'info-banner ' + bannerClass;
-    banner.innerHTML =
-      '<span class="banner-icon">' + icon + '</span>' +
-      '<div><p class="banner-text text-body-sm">' + warning.message + '</p></div>';
-
-    return banner;
-  }
-
-  function displayErrors(errors) {
-    resultSection.classList.remove('hidden');
-    resultCard.classList.remove('animate-fade-in-up');
-    void resultCard.offsetWidth;
-    resultCard.classList.add('animate-fade-in-up');
-
-    resultCard.className = 'card result-card animate-fade-in-up status-bahaya';
-    resultStatusBadge.className = 'status-badge bahaya';
-    resultStatusBadge.innerHTML = '<span>🔴</span> ERROR';
-
-    resultDoseNumber.textContent = '—';
-    resultDoseUnit.textContent = '';
-    resultDetails.innerHTML = '';
-
-    resultWarnings.innerHTML = '';
-    const errorList = document.createElement('ul');
-    errorList.className = 'error-list';
-    errors.forEach(function (err) {
-      const li = document.createElement('li');
-      li.textContent = err;
-      errorList.appendChild(li);
-    });
-    resultWarnings.appendChild(errorList);
-
-    setTimeout(function () {
-      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
-
-  // ==================== HISTORY ====================
-  function addToHistory(data) {
-    const entry = {
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-      patient: data.patientName,
-      drug: data.drug,
-      dose: data.dosePerAdministration + ' ' + data.unit,
-      status: data.status
-    };
-
-    calculationHistory.unshift(entry);
-
-    // Keep only last 20
-    if (calculationHistory.length > 20) {
-      calculationHistory = calculationHistory.slice(0, 20);
-    }
-
-    saveHistoryToStorage();
-    renderHistory();
-  }
-
-  function renderHistory() {
-    historyBody.innerHTML = '';
-
-    if (calculationHistory.length === 0) {
-      historyEmpty.classList.remove('hidden');
+    if (!plant || !plantPhases[plant]) {
+      phaseHint.textContent = 'Min: 0 | Max: 365 hari';
       return;
     }
 
-    historyEmpty.classList.add('hidden');
+    const phases = plantPhases[plant];
+    phaseHint.textContent = `Siklus: ${phases.max} hari`;
 
-    calculationHistory.forEach(function (entry, index) {
-      const tr = document.createElement('tr');
-      if (index === 0) {
-        tr.style.animation = 'fadeInUp 0.3s ease-out';
+    if (isNaN(age)) return;
+
+    for (const [phase, [start, end]] of Object.entries(phases)) {
+      if (phase === 'max') continue;
+      if (age >= start && age <= end) {
+        phaseHint.textContent = `${phaseLabels[phase]} (hari ${start}-${end})`;
+        phaseHint.style.color = '#4caf50';
+        return;
       }
+    }
 
-      let statusIcon = '✅';
-      if (entry.status === 'PERHATIAN') statusIcon = '🟡';
-      else if (entry.status === 'PERINGATAN') statusIcon = '🟠';
-      else if (entry.status === 'BAHAYA') statusIcon = '🔴';
-
-      tr.innerHTML =
-        '<td>' + entry.time + '</td>' +
-        '<td>' + escapeHtml(entry.patient) + '</td>' +
-        '<td>' + escapeHtml(entry.drug) + '</td>' +
-        '<td><strong>' + entry.dose + '</strong></td>' +
-        '<td>' + statusIcon + ' ' + entry.status + '</td>';
-
-      historyBody.appendChild(tr);
-    });
-  }
-
-  function saveHistoryToStorage() {
-    try {
-      localStorage.setItem('meddose-history', JSON.stringify(calculationHistory));
-    } catch (e) {
-      // localStorage not available
+    if (age > phases.max) {
+      phaseHint.textContent = `⚠️ Melebihi siklus tanam (${phases.max} hari)`;
+      phaseHint.style.color = '#fb8c00';
     }
   }
 
-  function loadHistoryFromStorage() {
+  plantAgeInput.addEventListener('input', updatePhaseHint);
+  plantSelect.addEventListener('change', updatePhaseHint);
+
+  // =========== Form submit ===========
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    submitBtn.disabled = true;
+
+    // Gather conditions checkboxes
+    const condCheckboxes = form.querySelectorAll('input[name="conditions"]:checked');
+    const conditions = Array.from(condCheckboxes).map(cb => cb.value);
+
+    const payload = {
+      farmerName: form.farmerName.value,
+      plantId: form.plantId.value,
+      fertilizerId: form.fertilizerId.value,
+      landArea: parseFloat(form.landArea.value),
+      plantAge: parseInt(form.plantAge.value),
+      soilPh: parseFloat(form.soilPh.value),
+      conditions,
+      otherFertilizer: form.otherFertilizer.value,
+    };
+
     try {
-      const stored = localStorage.getItem('meddose-history');
-      if (stored) {
-        calculationHistory = JSON.parse(stored);
-        renderHistory();
-      }
-    } catch (e) {
-      calculationHistory = [];
+      const res = await fetch('/api/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      renderResult(data);
+    } catch (err) {
+      renderError(['Gagal menghubungi server. Pastikan server berjalan.']);
+    } finally {
+      btnText.style.display = 'inline';
+      btnLoading.style.display = 'none';
+      submitBtn.disabled = false;
     }
+  });
+
+  // =========== Render Functions ===========
+  function renderResult(data) {
+    resultSection.style.display = 'block';
+
+    if (!data.success && data.type === 'VALIDATION_ERROR') {
+      renderError(data.errors);
+      return;
+    }
+
+    if (data.type === 'CONTRAINDICATED') {
+      resultContent.innerHTML = `
+        <div class="result-card">
+          <div class="result-header">
+            <span class="result-icon">⛔</span>
+            <h2>Pupuk Tidak Direkomendasikan</h2>
+          </div>
+          <p style="margin-bottom:1rem;color:var(--text-secondary)">
+            <strong>${data.farmerName}</strong> — ${data.plant} | Fase: ${data.growthPhase}
+          </p>
+          <div class="warning-box error">${data.message}</div>
+          ${data.warnings.map(w => `<div class="warning-box warn">${w}</div>`).join('')}
+        </div>`;
+      scrollToResult();
+      return;
+    }
+
+    // Normal calculation result
+    const d = data.dosage;
+    const s = data.safety;
+
+    let warningsHtml = '';
+    if (data.phWarning) {
+      warningsHtml += `<div class="warning-box info">🔬 ${data.phWarning}</div>`;
+    }
+    if (data.conditionWarnings && data.conditionWarnings.length > 0) {
+      warningsHtml += data.conditionWarnings.map(w => `<div class="warning-box warn">${w}</div>`).join('');
+    }
+    if (data.interactionWarning) {
+      const cls = data.interactionWarning.severity === 'major' ? 'error' : 'warn';
+      warningsHtml += `<div class="warning-box ${cls}">${data.interactionWarning.icon} <strong>Interaksi Pupuk:</strong> ${data.interactionWarning.message}</div>`;
+    }
+    if (d.isOverMax) {
+      warningsHtml += `<div class="warning-box error">⚠️ Dosis telah dibatasi ke maksimum ${d.maxAllowedPerHa} ${d.unit}/ha</div>`;
+    }
+
+    const costFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(data.estimatedCost);
+
+    resultContent.innerHTML = `
+      <div class="result-card">
+        <div class="result-header">
+          <span class="result-icon">🌿</span>
+          <h2>Hasil Perhitungan Dosis</h2>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="value">${d.total} ${d.unit}</span>
+            <span class="label">Total Dosis</span>
+          </div>
+          <div class="summary-item">
+            <span class="value">${d.perHectare} ${d.unit}/ha</span>
+            <span class="label">Dosis per Hektar</span>
+          </div>
+          <div class="summary-item">
+            <span class="value">${costFormatted}</span>
+            <span class="label">Estimasi Biaya</span>
+          </div>
+        </div>
+
+        <!-- Safety -->
+        <div style="margin-bottom:1.25rem;">
+          <span class="safety-badge ${s.color}">● ${s.status} (${s.usagePercent}% dari batas maks)</span>
+        </div>
+
+        <!-- Dose range -->
+        <div class="warning-box success">
+          📊 Rentang dosis yang direkomendasikan: <strong>${d.min} — ${d.max} ${d.unit}</strong>
+        </div>
+
+        <!-- Warnings -->
+        ${warningsHtml}
+
+        <!-- Detail Table -->
+        <table class="detail-table" style="margin-top:1.25rem">
+          <tr><th colspan="2">Detail Perhitungan</th></tr>
+          <tr><td>👨‍🌾 Petani</td><td>${data.farmerName}</td></tr>
+          <tr><td>🌿 Tanaman</td><td>${data.plant.name} (${data.plant.category})</td></tr>
+          <tr><td>🧪 Pupuk</td><td>${data.fertilizer.name}</td></tr>
+          <tr><td>📐 Luas Lahan</td><td>${data.landArea.toLocaleString('id-ID')} m² (${data.landAreaHa} ha)</td></tr>
+          <tr><td>📅 Usia Tanam</td><td>${data.plantAge} hari</td></tr>
+          <tr><td>🌱 Fase</td><td>${data.phaseLabel} (${data.growthPhase})</td></tr>
+          <tr><td>🔬 pH Tanah</td><td>${data.soilPh}</td></tr>
+          <tr><th colspan="2">Faktor Penyesuaian</th></tr>
+          <tr><td>Faktor Fase</td><td>×${data.factors.phaseFactor}</td></tr>
+          <tr><td>Faktor pH</td><td>×${data.factors.phFactor}</td></tr>
+          <tr><td>Faktor Kondisi</td><td>×${data.factors.conditionFactor}</td></tr>
+          <tr><td>Batas Maks/ha</td><td>${d.maxAllowedPerHa} ${d.unit}/ha</td></tr>
+        </table>
+      </div>`;
+
+    scrollToResult();
   }
 
-  // ==================== RESET ====================
-  function handleReset() {
-    form.reset();
-    resultSection.classList.add('hidden');
-    drugInfoBanner.classList.add('hidden');
-    frequencySelect.innerHTML = '<option value="">Pilih frekuensi...</option>';
-
-    // Reset age category to dewasa
-    const dewasaRadio = document.querySelector('input[name="age-category"][value="dewasa"]');
-    if (dewasaRadio) dewasaRadio.checked = true;
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function renderError(errors) {
+    resultSection.style.display = 'block';
+    resultContent.innerHTML = `
+      <div class="error-card">
+        <h2>❌ Validasi Gagal</h2>
+        <ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>
+      </div>`;
+    scrollToResult();
   }
 
-  // ==================== UTILITIES ====================
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  function scrollToResult() {
+    setTimeout(() => {
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
-
-  // ==================== START ====================
-  document.addEventListener('DOMContentLoaded', init);
-
-})();
+});
