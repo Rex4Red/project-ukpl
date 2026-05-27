@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultContent = document.getElementById('resultContent');
   const submitBtn = document.getElementById('submitBtn');
   const phaseHint = document.getElementById('phaseHint');
+  const resultPlaceholder = document.getElementById('resultPlaceholder');
 
   // =========== Phase hint on plant/age change ===========
   const plantAgeInput = document.getElementById('plantAge');
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========== Render Functions ===========
   function renderResult(data) {
     resultSection.style.display = 'block';
+    if (resultPlaceholder) resultPlaceholder.style.display = 'none';
 
     if (!data.success && data.type === 'VALIDATION_ERROR') {
       renderError(data.errors);
@@ -208,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderError(errors) {
     resultSection.style.display = 'block';
+    if (resultPlaceholder) resultPlaceholder.style.display = 'none';
     resultContent.innerHTML = `
       <div class="error-card">
         <h2>❌ Validasi Gagal</h2>

@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
@@ -15,146 +16,160 @@
   <div class="bg-decoration">
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
-    <div class="bg-blob blob-3"></div>
   </div>
 
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div class="logo">
-        <span class="logo-icon">🌱</span>
-        <div>
-          <h1>FertiliCalc</h1>
-          <p class="subtitle">Kalkulator Dosis Pupuk Tanaman</p>
-        </div>
+  <!-- Top App Bar -->
+  <header class="top-app-bar">
+    <div class="top-app-bar-inner">
+      <div class="app-brand">
+        <span class="material-symbols-outlined brand-icon">potted_plant</span>
+        <span class="brand-name">FertiliCalc</span>
       </div>
-      <p class="tagline">Hitung dosis pupuk yang tepat untuk hasil panen optimal</p>
-    </header>
-
-    <!-- Main Form -->
-    <main class="main-content">
-      <form id="calcForm" class="calc-form">
-        <!-- Row 1: Nama Petani + Jenis Tanaman -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="farmerName">👨‍🌾 Nama Petani</label>
-            <input type="text" id="farmerName" name="farmerName" placeholder="Masukkan nama petani" required />
-          </div>
-          <div class="form-group">
-            <label for="plantId">🌿 Jenis Tanaman</label>
-            <select id="plantId" name="plantId" required>
-              <option value="">— Pilih Tanaman —</option>
-              <option value="padi">🌾 Padi</option>
-              <option value="jagung">🌽 Jagung</option>
-              <option value="cabai">🌶️ Cabai Merah</option>
-              <option value="tomat">🍅 Tomat</option>
-              <option value="sawit">🌴 Kelapa Sawit</option>
-              <option value="bawang">🧅 Bawang Merah</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Row 2: Luas Lahan + Usia Tanam -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="landArea">📐 Luas Lahan (m²)</label>
-            <input type="number" id="landArea" name="landArea" min="1" max="100000" step="1" placeholder="contoh: 5000" required />
-            <span class="hint">Min: 1 m² | Max: 100.000 m²</span>
-          </div>
-          <div class="form-group">
-            <label for="plantAge">📅 Usia Tanam (hari)</label>
-            <input type="number" id="plantAge" name="plantAge" min="0" max="365" step="1" placeholder="contoh: 30" required />
-            <span class="hint" id="phaseHint">Min: 0 | Max: 365 hari</span>
-          </div>
-        </div>
-
-        <!-- Row 3: Jenis Pupuk + pH Tanah -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fertilizerId">🧪 Jenis Pupuk</label>
-            <select id="fertilizerId" name="fertilizerId" required>
-              <option value="">— Pilih Pupuk —</option>
-              <option value="urea">Urea (46% N)</option>
-              <option value="npk_15">NPK Phonska (15-15-15)</option>
-              <option value="kcl">KCl (60% K₂O)</option>
-              <option value="sp36">SP-36 (36% P₂O₅)</option>
-              <option value="za">ZA / Amonium Sulfat</option>
-              <option value="organik">Pupuk Organik / Kompos</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="soilPh">🔬 pH Tanah</label>
-            <input type="number" id="soilPh" name="soilPh" min="0" max="14" step="0.1" placeholder="contoh: 6.5" required />
-            <span class="hint">Skala 0-14 (netral: 7.0)</span>
-          </div>
-        </div>
-
-        <!-- Row 4: Kondisi Khusus -->
-        <div class="form-group full-width">
-          <label>⚡ Kondisi Khusus Lahan <span class="optional">(opsional, bisa pilih lebih dari 1)</span></label>
-          <div class="checkbox-group" id="conditionsGroup">
-            <label class="checkbox-label">
-              <input type="checkbox" name="conditions" value="tanahAsam" />
-              <span class="checkmark"></span>
-              Tanah Sangat Asam (pH &lt; 5)
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="conditions" value="kekeringan" />
-              <span class="checkmark"></span>
-              Musim Kemarau / Kekeringan
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="conditions" value="bekasBanjir" />
-              <span class="checkmark"></span>
-              Bekas Banjir / Genangan
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="conditions" value="seranganHama" />
-              <span class="checkmark"></span>
-              Serangan Hama / Penyakit
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="conditions" value="lahanBaru" />
-              <span class="checkmark"></span>
-              Lahan Baru / Belum Pernah Ditanam
-            </label>
-          </div>
-        </div>
-
-        <!-- Row 5: Pupuk Lain -->
-        <div class="form-group full-width">
-          <label for="otherFertilizer">🔄 Pupuk Lain yang Sudah Diaplikasikan <span class="optional">(opsional)</span></label>
-          <select id="otherFertilizer" name="otherFertilizer">
-            <option value="none">— Tidak ada pupuk lain —</option>
-            <option value="urea">Urea</option>
-            <option value="npk_15">NPK Phonska</option>
-            <option value="kcl">KCl</option>
-            <option value="sp36">SP-36</option>
-            <option value="za">ZA</option>
-            <option value="organik">Pupuk Organik</option>
-          </select>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" id="submitBtn" class="btn-calculate">
-          <span class="btn-icon">🌿</span>
-          <span class="btn-text">Hitung Dosis Pupuk</span>
-          <span class="btn-loading" style="display:none;">⏳ Menghitung...</span>
+      <div class="app-actions">
+        <button class="icon-btn" title="Akun">
+          <span class="material-symbols-outlined">account_circle</span>
         </button>
-      </form>
+        <button class="icon-btn" title="Pengaturan">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-      <!-- Result Section -->
-      <section id="resultSection" class="result-section" style="display:none;">
+  <!-- Page Header -->
+  <section class="page-header">
+    <h1 class="page-title">
+      <span class="title-icon">🌱</span> FertiliCalc
+    </h1>
+    <h2 class="page-subtitle">Kalkulator Dosis Pupuk Tanaman</h2>
+    <p class="page-desc">Hitung dosis pupuk yang tepat untuk hasil panen optimal</p>
+  </section>
+
+  <!-- Main Content Grid -->
+  <main class="main-grid">
+    <!-- LEFT: Calculator Form -->
+    <div class="form-column">
+      <div class="form-card">
+        <div class="card-accent"></div>
+        <form id="calcForm" class="calc-form">
+          <!-- Row 1: Nama + Tanaman -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="farmerName">👨‍🌾 Nama Petani</label>
+              <input type="text" id="farmerName" name="farmerName" class="fertili-input" placeholder="Masukkan nama (opsional)" />
+            </div>
+            <div class="form-group">
+              <label for="plantId">🌿 Jenis Tanaman</label>
+              <select id="plantId" name="plantId" class="fertili-input" required>
+                <option value="">— Pilih Tanaman —</option>
+                <option value="padi">🌾 Padi</option>
+                <option value="jagung">🌽 Jagung</option>
+                <option value="cabai">🌶️ Cabai Merah</option>
+                <option value="tomat">🍅 Tomat</option>
+                <option value="sawit">🌴 Kelapa Sawit</option>
+                <option value="bawang">🧅 Bawang Merah</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Luas + Usia -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="landArea">📐 Luas Lahan (m²)</label>
+              <input type="number" id="landArea" name="landArea" class="fertili-input" min="1" max="100000" step="1" placeholder="Contoh: 10000" required />
+            </div>
+            <div class="form-group">
+              <label for="plantAge">📅 Usia Tanam (hari)</label>
+              <input type="number" id="plantAge" name="plantAge" class="fertili-input" min="0" max="365" step="1" placeholder="Contoh: 30" required />
+              <span class="hint" id="phaseHint">Min: 0 | Max: 365 hari</span>
+            </div>
+          </div>
+
+          <!-- Row 3: Pupuk + pH -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fertilizerId">🧪 Jenis Pupuk</label>
+              <select id="fertilizerId" name="fertilizerId" class="fertili-input" required>
+                <option value="">— Pilih Pupuk —</option>
+                <option value="urea">Urea (46% N)</option>
+                <option value="npk_15">NPK Phonska (15-15-15)</option>
+                <option value="kcl">KCl (60% K₂O)</option>
+                <option value="sp36">SP-36 (36% P₂O₅)</option>
+                <option value="za">ZA / Amonium Sulfat</option>
+                <option value="organik">Pupuk Organik / Kompos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="soilPh">🔬 pH Tanah</label>
+              <input type="number" id="soilPh" name="soilPh" class="fertili-input" min="0" max="14" step="0.1" placeholder="Contoh: 6.5" required />
+              <span class="hint">Rentang ideal: 6.0 - 7.0</span>
+            </div>
+          </div>
+
+          <!-- Kondisi Khusus -->
+          <div class="form-group full-width">
+            <label>⚡ Kondisi Khusus (opsional)</label>
+            <div class="pill-group" id="conditionsGroup">
+              <label class="pill-label">
+                <input type="checkbox" name="conditions" value="tanahAsam" class="pill-checkbox" />
+                <span class="pill">Tanah Sangat Asam</span>
+              </label>
+              <label class="pill-label">
+                <input type="checkbox" name="conditions" value="kekeringan" class="pill-checkbox" />
+                <span class="pill">Musim Kemarau</span>
+              </label>
+              <label class="pill-label">
+                <input type="checkbox" name="conditions" value="bekasBanjir" class="pill-checkbox" />
+                <span class="pill">Bekas Banjir</span>
+              </label>
+              <label class="pill-label">
+                <input type="checkbox" name="conditions" value="seranganHama" class="pill-checkbox" />
+                <span class="pill">Serangan Hama</span>
+              </label>
+              <label class="pill-label">
+                <input type="checkbox" name="conditions" value="lahanBaru" class="pill-checkbox" />
+                <span class="pill">Lahan Baru</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Pupuk Lain -->
+          <div class="form-group full-width">
+            <label for="otherFertilizer">🔄 Pupuk Lain yang Sudah Diaplikasikan</label>
+            <select id="otherFertilizer" name="otherFertilizer" class="fertili-input">
+              <option value="none">Belum ada</option>
+              <option value="urea">Urea</option>
+              <option value="npk_15">NPK Phonska</option>
+              <option value="kcl">KCl</option>
+              <option value="sp36">SP-36</option>
+              <option value="za">ZA</option>
+              <option value="organik">Pupuk Organik</option>
+            </select>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="submitBtn" class="btn-calculate">
+            <span class="btn-icon">🌿</span>
+            <span class="btn-text">Hitung Dosis Pupuk</span>
+            <span class="btn-loading" style="display:none;">⏳ Menghitung...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT: Result Panel -->
+    <div class="result-column">
+      <section id="resultSection" class="result-panel" style="display:none;">
         <div id="resultContent"></div>
       </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <p>FertiliCalc v1.0 — Proyek Uji Kualitas Perangkat Lunak (UKPL) 2026</p>
-      <p class="disclaimer">⚠️ Perhitungan ini bersifat estimasi. Selalu konsultasikan dengan penyuluh pertanian setempat.</p>
-    </footer>
-  </div>
+      <!-- Placeholder when no results -->
+      <div id="resultPlaceholder" class="result-placeholder">
+        <span class="material-symbols-outlined placeholder-icon">eco</span>
+        <p>Hasil perhitungan akan muncul di sini</p>
+        <span class="hint">Isi form di sebelah kiri, lalu klik "Hitung Dosis Pupuk"</span>
+      </div>
+    </div>
+  </main>
 
   <script src="/js/app.js"></script>
 </body>
